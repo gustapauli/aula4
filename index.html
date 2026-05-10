@@ -1,1 +1,1640 @@
-jdhutjdnf
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>História · Aula 4</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #0a0a0a;
+  --bg-2: #131313;
+  --ink: #f5f3ef;
+  --ink-dim: #8a8680;
+  --ink-mute: #5a5650;
+  --line: #1f1d1a;
+  --accent: #d4a559;
+  --accent-soft: #d4a55922;
+  --red: #c54a3a;
+  --green: #6b8e5a;
+  --serif: ui-serif, "New York", "Times New Roman", Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+  touch-action: pan-y;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* === PROGRESS BAR === */
+.progress-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 14px 8px;
+  z-index: 100;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 70%, rgba(10,10,10,0) 100%);
+  pointer-events: auto;
+}
+
+.progress-bar {
+  display: flex;
+  gap: 3px;
+  height: 22px;
+  align-items: center;
+  padding: 8px 0;
+  margin: -8px 0;
+}
+
+.progress-seg {
+  flex: 1;
+  height: 2.5px;
+  background: rgba(245, 243, 239, 0.18);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.progress-seg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  border-radius: 2px;
+  transition: transform 0.3s ease;
+}
+
+.progress-seg.done::after { transform: scaleX(1); }
+.progress-seg.active::after { transform: scaleX(1); background: var(--ink); }
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  font-weight: 500;
+}
+
+.progress-meta .label { font-family: var(--mono); }
+
+/* === SLIDES === */
+.deck {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: 80px 28px 80px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.slide.prev {
+  transform: translateX(-20px);
+}
+
+/* === TOUCH ZONES === */
+.touch-zones {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  pointer-events: none;
+}
+.tz {
+  flex: 1;
+  pointer-events: auto;
+}
+.tz-left { flex: 0 0 30%; }
+.tz-right { flex: 0 0 30%; margin-left: auto; }
+
+/* === TYPOGRAPHY === */
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 18px;
+  font-family: var(--mono);
+}
+
+.eyebrow-mute {
+  color: var(--ink-dim);
+}
+
+h1.title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(34px, 9vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+h1.title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+h2.heading {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(28px, 7.5vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+h2.heading em { font-style: italic; color: var(--accent); }
+
+h3.sub {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+}
+
+p.body {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  font-weight: 400;
+  margin-bottom: 14px;
+}
+
+p.body.dim { color: var(--ink-dim); font-size: 16px; }
+
+.lead {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 18px;
+}
+
+.lead em { font-style: italic; color: var(--accent); }
+
+.highlight {
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  color: var(--ink-dim);
+}
+
+.tag.accent { border-color: var(--accent); color: var(--accent); }
+
+.divider {
+  height: 1px;
+  background: var(--line);
+  margin: 22px 0;
+}
+
+.spacer { flex: 1; }
+.spacer-sm { height: 18px; }
+.spacer-md { height: 28px; }
+
+/* === COVER === */
+.cover {
+  justify-content: space-between;
+}
+
+.cover-top { display: flex; flex-direction: column; gap: 10px; }
+.cover-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  font-family: var(--mono);
+}
+.cover-meta .dot {
+  width: 4px; height: 4px; background: var(--accent); border-radius: 50%;
+}
+
+.cover-illu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0;
+}
+
+.cover-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--ink-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hint-dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+/* === ILLUSTRATION CONTAINER === */
+.illu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 14px 0 22px;
+}
+
+.illu svg { display: block; max-width: 100%; height: auto; }
+
+.illu-sm { margin: 8px 0 18px; }
+.illu-lg { margin: 22px 0 28px; }
+
+/* === CARDS / BLOCKS === */
+.card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  background: var(--bg-2);
+  margin-bottom: 12px;
+}
+
+.card-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.card-icon {
+  flex: 0 0 36px;
+  width: 36px; height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.card-content { flex: 1; }
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+.card-text {
+  font-size: 14px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+.pillar {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.pillar-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+}
+
+.pillar-name {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.pillar-fn {
+  font-size: 14px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+.quote {
+  border-left: 2px solid var(--accent);
+  padding: 4px 0 4px 16px;
+  margin: 18px 0;
+}
+
+.quote-text {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.bignum {
+  font-family: var(--serif);
+  font-size: clamp(80px, 22vw, 110px);
+  line-height: 0.9;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.bignum-label {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  font-family: var(--mono);
+}
+
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.compare-cell {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 14px;
+  background: var(--bg-2);
+}
+
+.compare-label {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+  font-family: var(--mono);
+}
+
+.compare-value {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.15;
+  font-weight: 500;
+}
+
+.compare-value.accent { color: var(--accent); }
+
+.equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 24px 0;
+}
+
+.eq-item {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-2);
+  text-transform: uppercase;
+}
+
+.eq-op {
+  color: var(--accent);
+  font-family: var(--serif);
+  font-size: 24px;
+}
+
+/* === QUIZ === */
+.quiz-intro {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.quiz-q {
+  font-family: var(--serif);
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 24px;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-opt {
+  text-align: left;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-2);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.quiz-opt:active { transform: scale(0.98); }
+
+.quiz-opt-letter {
+  flex: 0 0 22px;
+  width: 22px; height: 22px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 11px;
+  font-family: var(--mono);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-dim);
+  font-weight: 600;
+  margin-top: 1px;
+}
+
+.quiz-opt.correct {
+  border-color: var(--green);
+  background: rgba(107, 142, 90, 0.12);
+}
+.quiz-opt.correct .quiz-opt-letter {
+  border-color: var(--green);
+  background: var(--green);
+  color: #fff;
+}
+
+.quiz-opt.wrong {
+  border-color: var(--red);
+  background: rgba(197, 74, 58, 0.12);
+}
+.quiz-opt.wrong .quiz-opt-letter {
+  border-color: var(--red);
+  background: var(--red);
+  color: #fff;
+}
+
+.quiz-opt:disabled { cursor: default; }
+.quiz-opt:disabled:not(.correct):not(.wrong) { opacity: 0.45; }
+
+.quiz-feedback {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  display: none;
+}
+
+.quiz-feedback.show { display: block; animation: fadeUp 0.3s ease; }
+
+.quiz-feedback.ok {
+  background: rgba(107, 142, 90, 0.12);
+  border: 1px solid rgba(107, 142, 90, 0.3);
+  color: #a8c598;
+}
+
+.quiz-feedback.no {
+  background: rgba(197, 74, 58, 0.12);
+  border: 1px solid rgba(197, 74, 58, 0.3);
+  color: #e8a195;
+}
+
+.quiz-feedback strong { color: var(--ink); }
+
+.quiz-next-hint {
+  margin-top: 14px;
+  font-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+.quiz-next-hint.show { display: flex; animation: fadeUp 0.4s 0.2s ease both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.quiz-counter {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+/* === FINAL SCREEN === */
+.final {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 28px;
+}
+
+.final-score {
+  font-family: var(--serif);
+  font-size: 96px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  margin: 12px 0;
+}
+
+.final-score-total {
+  font-size: 40px;
+  color: var(--ink-dim);
+}
+
+.final-msg {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin: 18px 0 32px;
+  max-width: 320px;
+}
+
+.btn {
+  border: none;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 14px 28px;
+  border-radius: 100px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.btn:active { transform: scale(0.96); opacity: 0.9; }
+
+/* === SCROLLBAR === */
+.slide::-webkit-scrollbar { display: none; }
+.slide { scrollbar-width: none; }
+
+/* helpers */
+.text-accent { color: var(--accent); }
+.text-dim { color: var(--ink-dim); }
+.center { text-align: center; }
+.flex-center { display: flex; align-items: center; justify-content: center; flex-direction: column; }
+</style>
+</head>
+<body>
+
+<div class="progress-wrap">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="progress-meta">
+    <span class="label">História · Aula 04</span>
+    <span class="label" id="counter">1/24</span>
+  </div>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1. CAPA -->
+  <section class="slide cover active">
+    <div class="cover-top">
+      <div class="cover-meta">
+        <span>História</span>
+        <span class="dot"></span>
+        <span>Aula 04</span>
+      </div>
+    </div>
+
+    <div class="cover-illu">
+      <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
+        <!-- vilarejo -> império -->
+        <circle cx="110" cy="110" r="100" stroke="#1f1d1a" stroke-width="1"/>
+        <circle cx="110" cy="110" r="70" stroke="#1f1d1a" stroke-width="1"/>
+        <circle cx="110" cy="110" r="40" stroke="#d4a559" stroke-width="1.2"/>
+        <!-- pequena casa central -->
+        <path d="M100 115 L110 105 L120 115 L120 125 L100 125 Z" stroke="#d4a559" stroke-width="1.5" fill="none"/>
+        <!-- pontos representando cidades -->
+        <circle cx="110" cy="40" r="2.5" fill="#f5f3ef"/>
+        <circle cx="180" cy="110" r="2.5" fill="#f5f3ef"/>
+        <circle cx="110" cy="180" r="2.5" fill="#f5f3ef"/>
+        <circle cx="40" cy="110" r="2.5" fill="#f5f3ef"/>
+        <circle cx="158" cy="62" r="2" fill="#8a8680"/>
+        <circle cx="158" cy="158" r="2" fill="#8a8680"/>
+        <circle cx="62" cy="158" r="2" fill="#8a8680"/>
+        <circle cx="62" cy="62" r="2" fill="#8a8680"/>
+        <!-- linhas conectando -->
+        <line x1="110" y1="110" x2="110" y2="40" stroke="#1f1d1a" stroke-width="0.8"/>
+        <line x1="110" y1="110" x2="180" y2="110" stroke="#1f1d1a" stroke-width="0.8"/>
+        <line x1="110" y1="110" x2="110" y2="180" stroke="#1f1d1a" stroke-width="0.8"/>
+        <line x1="110" y1="110" x2="40" y2="110" stroke="#1f1d1a" stroke-width="0.8"/>
+      </svg>
+    </div>
+
+    <div class="cover-bottom">
+      <h1 class="title">Quando vilarejo<br>virou <em>império.</em></h1>
+      <p class="body dim">Escrita, exército e deuses — as três invenções que ainda mandam no seu século.</p>
+      <div class="spacer-sm"></div>
+      <div class="hint">
+        <span class="hint-dot"></span>
+        <span>Toque pra começar</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. RECAP -->
+  <section class="slide">
+    <div class="eyebrow">Onde a gente parou</div>
+    <h2 class="heading">Aula passada:<br>o ser humano <em>aprendeu a plantar.</em></h2>
+    <div class="illu illu-sm">
+      <svg width="180" height="100" viewBox="0 0 180 100" fill="none">
+        <line x1="10" y1="80" x2="170" y2="80" stroke="#1f1d1a" stroke-width="1"/>
+        <path d="M30 80 Q30 65 35 60 M30 80 Q30 65 25 60" stroke="#d4a559" stroke-width="1.2" fill="none"/>
+        <path d="M60 80 Q60 60 65 55 M60 80 Q60 60 55 55" stroke="#d4a559" stroke-width="1.2" fill="none"/>
+        <path d="M90 80 Q90 55 95 50 M90 80 Q90 55 85 50" stroke="#d4a559" stroke-width="1.2" fill="none"/>
+        <path d="M120 80 Q120 60 125 55 M120 80 Q120 60 115 55" stroke="#d4a559" stroke-width="1.2" fill="none"/>
+        <path d="M150 80 Q150 65 155 60 M150 80 Q150 65 145 60" stroke="#d4a559" stroke-width="1.2" fill="none"/>
+      </svg>
+    </div>
+    <p class="body">Vilarejos nascendo. Profissões aparecendo. Desigualdade começando a existir.</p>
+    <p class="body dim">Cem, duzentas pessoas. Pequeno. Manejável.</p>
+  </section>
+
+  <!-- 3. SALTO -->
+  <section class="slide">
+    <div class="eyebrow">Hoje</div>
+    <h2 class="heading">Como esse vilarejinho virou <em>império de milhões?</em></h2>
+    <div class="illu">
+      <svg width="240" height="80" viewBox="0 0 240 80" fill="none">
+        <circle cx="20" cy="40" r="6" stroke="#8a8680" stroke-width="1.2"/>
+        <path d="M40 40 L200 40" stroke="#1f1d1a" stroke-width="1" stroke-dasharray="3 4"/>
+        <circle cx="220" cy="40" r="18" stroke="#d4a559" stroke-width="1.5"/>
+        <circle cx="220" cy="40" r="10" stroke="#d4a559" stroke-width="1"/>
+        <circle cx="220" cy="40" r="3" fill="#d4a559"/>
+      </svg>
+    </div>
+    <p class="body">Exércitos organizados. Construções que existem até hoje. Milhões de habitantes obedecendo um cara só.</p>
+    <div class="spacer-sm"></div>
+    <p class="lead">Tudo isso virou possível por causa de <em>três invenções.</em></p>
+    <p class="body dim">E elas continuam moldando seu dia a dia. Liga isso.</p>
+  </section>
+
+  <!-- 4. AS TRÊS -->
+  <section class="slide">
+    <div class="eyebrow">As três invenções</div>
+    <h2 class="heading">A fórmula que <em>nunca foi embora.</em></h2>
+    <div class="spacer-sm"></div>
+    <div class="pillar">
+      <div class="pillar-num">01 — INFORMAÇÃO</div>
+      <div class="pillar-name">Escrita</div>
+      <div class="pillar-fn">Tira a memória da cabeça e joga pro mundo.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">02 — FORÇA</div>
+      <div class="pillar-name">Exército</div>
+      <div class="pillar-fn">Cem treinados ganham de mil desorganizados.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">03 — MENTES</div>
+      <div class="pillar-name">Religião</div>
+      <div class="pillar-fn">Obedecer o rei vira obedecer Deus.</div>
+    </div>
+  </section>
+
+  <!-- 5. INVENÇÃO 1 — ABERTURA -->
+  <section class="slide">
+    <div class="eyebrow">Invenção 01</div>
+    <h2 class="heading">A <em>escrita.</em></h2>
+    <div class="illu illu-lg">
+      <svg width="200" height="160" viewBox="0 0 200 160" fill="none">
+        <rect x="40" y="30" width="120" height="100" rx="6" stroke="#d4a559" stroke-width="1.5" fill="none"/>
+        <!-- cuneiforme stylized -->
+        <path d="M58 55 L62 50 L62 60 Z" fill="#d4a559"/>
+        <path d="M70 55 L74 50 L74 60 Z" fill="#d4a559"/>
+        <path d="M82 50 L86 55 L82 60 Z" fill="#d4a559"/>
+        <path d="M58 75 L65 75 M58 75 L58 82" stroke="#f5f3ef" stroke-width="1.2"/>
+        <path d="M75 75 L82 75 M75 75 L75 82" stroke="#f5f3ef" stroke-width="1.2"/>
+        <path d="M92 80 L98 75 L98 85 Z" fill="#f5f3ef"/>
+        <path d="M58 95 L65 95 M58 95 L58 102" stroke="#8a8680" stroke-width="1.2"/>
+        <path d="M75 100 L80 95 L80 105 Z" fill="#8a8680"/>
+        <path d="M92 95 L99 95 M92 95 L92 102" stroke="#8a8680" stroke-width="1.2"/>
+        <path d="M110 95 L114 90 L114 100 Z" fill="#8a8680"/>
+        <path d="M58 115 L65 115" stroke="#5a5650" stroke-width="1.2"/>
+        <path d="M75 115 L82 115" stroke="#5a5650" stroke-width="1.2"/>
+      </svg>
+    </div>
+    <p class="lead">Antes dela, a sociedade guardava informação <em>na cabeça das pessoas.</em></p>
+  </section>
+
+  <!-- 6. PROBLEMA DA MEMÓRIA -->
+  <section class="slide">
+    <div class="eyebrow eyebrow-mute">O problema</div>
+    <h2 class="heading">A memória <em>morre junto.</em></h2>
+    <p class="body">Um velho da tribo lembrava das histórias, das regras, dos acordos.</p>
+    <p class="body">Quando ele morria, parte do conhecimento ia embora junto.</p>
+    <div class="divider"></div>
+    <div class="compare">
+      <div class="compare-cell">
+        <div class="compare-label">Tribo</div>
+        <div class="compare-value">50 pessoas</div>
+        <p class="card-text" style="margin-top:6px;">Funciona</p>
+      </div>
+      <div class="compare-cell">
+        <div class="compare-label">Cidade</div>
+        <div class="compare-value accent">5.000</div>
+        <p class="card-text" style="margin-top:6px;">Impossível</p>
+      </div>
+    </div>
+    <p class="body dim">Não dá pra todo mundo lembrar de tudo.</p>
+  </section>
+
+  <!-- 7. SURGE NA MESOPOTÂMIA -->
+  <section class="slide">
+    <div class="eyebrow">5.500 anos atrás</div>
+    <h2 class="heading">Mesopotâmia.<br><em>Onde hoje fica o Iraque.</em></h2>
+    <div class="illu">
+      <svg width="220" height="120" viewBox="0 0 220 120" fill="none">
+        <path d="M20 90 Q60 70 110 80 T200 75" stroke="#d4a559" stroke-width="1.5" fill="none"/>
+        <path d="M20 100 Q60 85 110 95 T200 90" stroke="#8a8680" stroke-width="1.2" fill="none"/>
+        <text x="22" y="60" fill="#8a8680" font-size="9" font-family="ui-monospace,monospace" letter-spacing="1">TIGRE</text>
+        <text x="22" y="115" fill="#8a8680" font-size="9" font-family="ui-monospace,monospace" letter-spacing="1">EUFRATES</text>
+        <circle cx="110" cy="40" r="14" stroke="#d4a559" stroke-width="1.2" fill="none"/>
+        <path d="M104 40 L110 34 L116 40 L116 46 L104 46 Z" stroke="#d4a559" stroke-width="1"/>
+      </svg>
+    </div>
+    <p class="body">Alguém teve uma ideia genial: riscar marquinhas numa pedra molhada de barro.</p>
+    <p class="body">Cada marquinha representava uma coisa. Trigo, ovelha, número.</p>
+  </section>
+
+  <!-- 8. PRA QUE NASCEU -->
+  <section class="slide">
+    <div class="eyebrow">Pega o detalhe</div>
+    <h2 class="heading">A escrita <em>não nasceu</em> pra fazer poesia.</h2>
+    <div class="spacer-sm"></div>
+    <p class="body">Não nasceu pra contar história. Não nasceu pra escrever romance.</p>
+    <div class="divider"></div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="3" y="3" width="12" height="12" stroke="currentColor" stroke-width="1.3"/>
+            <line x1="3" y1="7" x2="15" y2="7" stroke="currentColor" stroke-width="1.3"/>
+            <line x1="9" y1="7" x2="9" y2="15" stroke="currentColor" stroke-width="1.3"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-title">Nasceu pra contabilidade</div>
+          <div class="card-text">Quanto trigo entrou no celeiro do rei. Quanto imposto cada agricultor devia. Quantos soldados tinha no exército.</div>
+        </div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top: 10px;">A escrita nasceu como <em>ferramenta de controle.</em></p>
+  </section>
+
+  <!-- 9. VERDADE GRANDE -->
+  <section class="slide">
+    <div class="eyebrow">Guarda isso</div>
+    <div class="quote">
+      <p class="quote-text">Toda tecnologia poderosa, na história, nasceu como ferramenta de controle. E só depois virou ferramenta de libertação.</p>
+    </div>
+    <div class="spacer-sm"></div>
+    <p class="body">A escrita virou poesia, virou ciência, virou literatura.</p>
+    <p class="body text-accent"><strong>Mas começou como planilha de imposto.</strong></p>
+  </section>
+
+  <!-- 10. ESCRITA = SEM LIMITE -->
+  <section class="slide">
+    <div class="eyebrow">Consequência</div>
+    <h2 class="heading">Com escrita, a sociedade <em>cresce sem limite.</em></h2>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M3 9 H15 M9 3 Q12 9 9 15 Q6 9 9 3" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-title">Ordem a 1.000 km de distância</div>
+          <div class="card-text">O rei manda recado pra cidade do outro lado do reino.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M5 3 H13 V15 H5 Z" stroke="currentColor" stroke-width="1.3"/>
+            <line x1="7" y1="7" x2="11" y2="7" stroke="currentColor" stroke-width="1"/>
+            <line x1="7" y1="10" x2="11" y2="10" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-title">Regra que atravessa gerações</div>
+          <div class="card-text">Sacerdote escreve a lei religiosa. Vale daqui a 200 anos.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M4 4 L14 4 L14 14 L4 14 Z" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M7 8 L11 8 M7 11 L10 11" stroke="currentColor" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="card-content">
+          <div class="card-title">Contrato que sobrevive à morte</div>
+          <div class="card-text">A outra pessoa morreu? Tanto faz. O papel continua valendo.</div>
+        </div>
+      </div>
+    </div>
+    <p class="body text-accent" style="margin-top: 14px;"><strong>Memória sai da cabeça → vira eterna.</strong></p>
+  </section>
+
+  <!-- 11. INVENÇÃO 2 — ABERTURA -->
+  <section class="slide">
+    <div class="eyebrow">Invenção 02</div>
+    <h2 class="heading">O <em>exército organizado.</em></h2>
+    <div class="illu illu-lg">
+      <svg width="220" height="160" viewBox="0 0 220 160" fill="none">
+        <!-- triângulo militar formação -->
+        <circle cx="110" cy="30" r="5" stroke="#d4a559" stroke-width="1.3"/>
+        <circle cx="90" cy="60" r="4" stroke="#f5f3ef" stroke-width="1.2"/>
+        <circle cx="130" cy="60" r="4" stroke="#f5f3ef" stroke-width="1.2"/>
+        <circle cx="70" cy="90" r="3.5" stroke="#8a8680" stroke-width="1"/>
+        <circle cx="95" cy="90" r="3.5" stroke="#8a8680" stroke-width="1"/>
+        <circle cx="125" cy="90" r="3.5" stroke="#8a8680" stroke-width="1"/>
+        <circle cx="150" cy="90" r="3.5" stroke="#8a8680" stroke-width="1"/>
+        <circle cx="50" cy="120" r="3" stroke="#5a5650" stroke-width="1"/>
+        <circle cx="75" cy="120" r="3" stroke="#5a5650" stroke-width="1"/>
+        <circle cx="100" cy="120" r="3" stroke="#5a5650" stroke-width="1"/>
+        <circle cx="125" cy="120" r="3" stroke="#5a5650" stroke-width="1"/>
+        <circle cx="150" cy="120" r="3" stroke="#5a5650" stroke-width="1"/>
+        <circle cx="175" cy="120" r="3" stroke="#5a5650" stroke-width="1"/>
+        <line x1="110" y1="30" x2="90" y2="60" stroke="#1f1d1a" stroke-width="0.8"/>
+        <line x1="110" y1="30" x2="130" y2="60" stroke="#1f1d1a" stroke-width="0.8"/>
+      </svg>
+    </div>
+    <p class="lead">Antes, briga era <em>só pancadaria.</em></p>
+  </section>
+
+  <!-- 12. ANTES DO EXÉRCITO -->
+  <section class="slide">
+    <div class="eyebrow eyebrow-mute">Antes</div>
+    <h2 class="heading">Cada um pegava <em>uma pedra, um pau</em>, e batia.</h2>
+    <div class="spacer-sm"></div>
+    <p class="body">Sem estratégia.</p>
+    <p class="body">Sem hierarquia.</p>
+    <p class="body">Sem treinamento.</p>
+    <div class="divider"></div>
+    <p class="body dim">Só força bruta. Quem tinha mais gente, ganhava.</p>
+  </section>
+
+  <!-- 13. RECEITA DO EXÉRCITO -->
+  <section class="slide">
+    <div class="eyebrow">A jogada</div>
+    <h2 class="heading">A receita <em>do exército.</em></h2>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon"><strong style="font-size:13px;">1</strong></div>
+        <div class="card-content"><div class="card-text" style="color:var(--ink);">Pega 100 homens.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon"><strong style="font-size:13px;">2</strong></div>
+        <div class="card-content"><div class="card-text" style="color:var(--ink);">Treina todos do mesmo jeito.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon"><strong style="font-size:13px;">3</strong></div>
+        <div class="card-content"><div class="card-text" style="color:var(--ink);">Arma igual pra cada um.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon"><strong style="font-size:13px;">4</strong></div>
+        <div class="card-content"><div class="card-text" style="color:var(--ink);">Um chefe pra cada 10. Um chefe maior pra cada 100.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon"><strong style="font-size:13px;">5</strong></div>
+        <div class="card-content"><div class="card-text" style="color:var(--ink);">Marcham, atacam, recuam — juntos.</div></div>
+      </div>
+    </div>
+    <p class="body text-accent" style="margin-top:14px;"><strong>100 treinados &gt; 1.000 desorganizados.</strong></p>
+  </section>
+
+  <!-- 14. NASCE O IMPÉRIO -->
+  <section class="slide">
+    <div class="eyebrow">Pela primeira vez na história</div>
+    <h2 class="heading">Surge o <em>império.</em></h2>
+    <div class="spacer-sm"></div>
+    <p class="lead">Uma cidade que <em>dominou várias outras</em> — e mantém isso pelo exército.</p>
+    <div class="illu">
+      <svg width="240" height="100" viewBox="0 0 240 100" fill="none">
+        <circle cx="120" cy="50" r="14" stroke="#d4a559" stroke-width="1.5" fill="none"/>
+        <path d="M114 50 L120 44 L126 50 L126 56 L114 56 Z" stroke="#d4a559" stroke-width="1"/>
+        <line x1="120" y1="50" x2="40" y2="30" stroke="#1f1d1a" stroke-width="0.8"/>
+        <line x1="120" y1="50" x2="40" y2="70" stroke="#1f1d1a" stroke-width="0.8"/>
+        <line x1="120" y1="50" x2="200" y2="30" stroke="#1f1d1a" stroke-width="0.8"/>
+        <line x1="120" y1="50" x2="200" y2="70" stroke="#1f1d1a" stroke-width="0.8"/>
+        <line x1="120" y1="50" x2="120" y2="10" stroke="#1f1d1a" stroke-width="0.8"/>
+        <line x1="120" y1="50" x2="120" y2="90" stroke="#1f1d1a" stroke-width="0.8"/>
+        <circle cx="40" cy="30" r="3" fill="#8a8680"/>
+        <circle cx="40" cy="70" r="3" fill="#8a8680"/>
+        <circle cx="200" cy="30" r="3" fill="#8a8680"/>
+        <circle cx="200" cy="70" r="3" fill="#8a8680"/>
+        <circle cx="120" cy="10" r="3" fill="#8a8680"/>
+        <circle cx="120" cy="90" r="3" fill="#8a8680"/>
+      </svg>
+    </div>
+    <p class="body dim">Egito, Mesopotâmia, Pérsia, Grécia, Roma. Todos seguiram a mesma lógica.</p>
+  </section>
+
+  <!-- 15. PARADOXO ROMA -->
+  <section class="slide">
+    <div class="eyebrow">Mas calma. Tem um problema.</div>
+    <h2 class="heading">Como <em>300 mil</em> mandam em <em>60 milhões?</em></h2>
+    <div class="spacer-sm"></div>
+    <div class="compare">
+      <div class="compare-cell">
+        <div class="compare-label">Soldados</div>
+        <div class="compare-value">300 mil</div>
+        <p class="card-text" style="margin-top:6px;">No auge de Roma</p>
+      </div>
+      <div class="compare-cell">
+        <div class="compare-label">Habitantes</div>
+        <div class="compare-value accent">60 mi</div>
+        <p class="card-text" style="margin-top:6px;">Vivendo no império</p>
+      </div>
+    </div>
+    <p class="body">Por que os 60 milhões não pegaram em armas e expulsaram os romanos?</p>
+    <p class="body text-accent"><strong>A resposta tá na terceira invenção.</strong></p>
+  </section>
+
+  <!-- 16. INVENÇÃO 3 — ABERTURA -->
+  <section class="slide">
+    <div class="eyebrow">Invenção 03 · A mais poderosa</div>
+    <h2 class="heading">A religião<br><em>institucionalizada.</em></h2>
+    <div class="illu illu-lg">
+      <svg width="200" height="170" viewBox="0 0 200 170" fill="none">
+        <!-- templo / pirâmide com olho -->
+        <path d="M100 20 L40 140 L160 140 Z" stroke="#d4a559" stroke-width="1.5" fill="none"/>
+        <path d="M100 60 L70 130 L130 130 Z" stroke="#8a8680" stroke-width="1" fill="none"/>
+        <circle cx="100" cy="95" r="8" stroke="#d4a559" stroke-width="1.3"/>
+        <circle cx="100" cy="95" r="3" fill="#d4a559"/>
+        <line x1="40" y1="155" x2="160" y2="155" stroke="#1f1d1a" stroke-width="1"/>
+      </svg>
+    </div>
+    <p class="lead dim">Atenção nessa palavra: <em>institucionalizada.</em></p>
+  </section>
+
+  <!-- 17. DIFERENÇA -->
+  <section class="slide">
+    <div class="eyebrow">Não confunde</div>
+    <h2 class="heading">Religião <em>sempre existiu.</em></h2>
+    <p class="body">Desde que o ser humano tem consciência, ele pergunta:</p>
+    <p class="body dim">— O que tem depois da morte?</p>
+    <p class="body dim">— Quem criou o mundo?</p>
+    <p class="body dim">— Por que as coisas acontecem?</p>
+    <div class="divider"></div>
+    <p class="body">Isso é tão velho quanto a humanidade.</p>
+    <p class="lead" style="margin-top:14px;">Mas <em>institucionalizar</em> é outra coisa.</p>
+  </section>
+
+  <!-- 18. O QUE É INSTITUCIONALIZAR -->
+  <section class="slide">
+    <div class="eyebrow">Institucionalizar é...</div>
+    <h2 class="heading">Quando crença vira <em>estrutura.</em></h2>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 14 L9 4 L15 14 Z" stroke="currentColor" stroke-width="1.3"/></svg>
+        </div>
+        <div class="card-content"><div class="card-title">Templo</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M4 15 Q9 10 14 15" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+        </div>
+        <div class="card-content"><div class="card-title">Sacerdote</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="4" y="3" width="10" height="12" stroke="currentColor" stroke-width="1.3"/><line x1="6" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1"/><line x1="6" y1="10" x2="12" y2="10" stroke="currentColor" stroke-width="1"/></svg>
+        </div>
+        <div class="card-content"><div class="card-title">Regra escrita</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2 L15 8 L12 8 L12 16 L6 16 L6 8 L3 8 Z" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+        </div>
+        <div class="card-content"><div class="card-title">Hierarquia</div></div>
+      </div>
+    </div>
+    <p class="body text-accent" style="margin-top:14px;"><strong>+ aliança com o poder político.</strong></p>
+  </section>
+
+  <!-- 19. REI = DEUS -->
+  <section class="slide">
+    <div class="eyebrow">Os primeiros reis</div>
+    <h2 class="heading">Todos foram considerados <em>sagrados.</em></h2>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">𓂀</div>
+        <div class="card-content">
+          <div class="card-title">Faraó do Egito</div>
+          <div class="card-text">Não era homem. Era um deus na terra.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">天</div>
+        <div class="card-content">
+          <div class="card-title">Imperador da China</div>
+          <div class="card-text">O filho do céu.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">𒀭</div>
+        <div class="card-content">
+          <div class="card-title">Rei da Mesopotâmia</div>
+          <div class="card-text">Escolhido pelos próprios deuses.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20. JOGADA GENIAL -->
+  <section class="slide">
+    <div class="eyebrow">A jogada</div>
+    <h2 class="heading">Por que o camponês <em>obedecia o rei?</em></h2>
+    <div class="spacer-sm"></div>
+    <div class="quote">
+      <p class="quote-text">Desobedecer o rei = desobedecer Deus. Desobedecer Deus = inferno.</p>
+    </div>
+    <p class="body">Não era medo do exército. Era medo do que vinha <strong>depois da morte.</strong></p>
+    <div class="divider"></div>
+    <p class="body text-accent"><strong>O rei não precisava de um soldado em cada esquina.</strong></p>
+    <p class="body dim">Bastava um sacerdote em cada vilarejo dizendo que obedecer o rei era vontade dos deuses.</p>
+  </section>
+
+  <!-- 21. AVISO IMPORTANTE -->
+  <section class="slide">
+    <div class="eyebrow eyebrow-mute">Presta atenção aqui</div>
+    <h2 class="heading">Eu <em>não tô dizendo</em> que fé é mentira.</h2>
+    <p class="body">Não tô dizendo que pessoa religiosa é boba.</p>
+    <p class="body">Religião responde perguntas profundas. Isso é legítimo.</p>
+    <div class="divider"></div>
+    <p class="lead">O que <em>tô dizendo</em>:</p>
+    <p class="body">Ao longo da história, ela foi <strong>usada</strong> como ferramenta política. Pra manter as massas obedientes.</p>
+    <p class="body text-accent" style="margin-top:14px;"><strong>Entender isso te protege de quem usa o nome de Deus pra te dizer em quem votar.</strong></p>
+  </section>
+
+  <!-- 22. A FÓRMULA -->
+  <section class="slide">
+    <div class="eyebrow">Junta as três</div>
+    <h2 class="heading">A fórmula <em>completa.</em></h2>
+    <div class="equation">
+      <span class="eq-item">Escrita</span>
+      <span class="eq-op">+</span>
+      <span class="eq-item">Exército</span>
+      <span class="eq-op">+</span>
+      <span class="eq-item">Religião</span>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">i</div>
+        <div class="card-content">
+          <div class="card-title">Escrita</div>
+          <div class="card-text">Controla a informação.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">⚔</div>
+        <div class="card-content">
+          <div class="card-title">Exército</div>
+          <div class="card-text">Controla a força.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon">▲</div>
+        <div class="card-content">
+          <div class="card-title">Religião</div>
+          <div class="card-text">Controla as mentes.</div>
+        </div>
+      </div>
+    </div>
+    <p class="body dim" style="margin-top:14px;">Mesopotâmia, Egito, China, Índia, Astecas, Maias, Incas. Todos chegaram na mesma fórmula.</p>
+    <p class="body text-accent"><strong>Por quê? Porque ela funciona.</strong></p>
+  </section>
+
+  <!-- 23. A FÓRMULA HOJE -->
+  <section class="slide">
+    <div class="eyebrow">Século XXI</div>
+    <h2 class="heading">A fórmula <em>nunca foi embora.</em></h2>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon" style="background:transparent; border:1px solid var(--accent);">📡</div>
+        <div class="card-content">
+          <div class="card-title">Escrita → Mídia</div>
+          <div class="card-text">Antes: sacerdote escrevendo na pedra. Hoje: algoritmo decidindo o que aparece no seu feed.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon" style="background:transparent; border:1px solid var(--accent);">🛡</div>
+        <div class="card-content">
+          <div class="card-title">Exército → Polícia, justiça, inteligência</div>
+          <div class="card-text">Quem tem a força, faz a regra valer.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-row">
+        <div class="card-icon" style="background:transparent; border:1px solid var(--accent);">◉</div>
+        <div class="card-content">
+          <div class="card-title">Religião → Ideologia</div>
+          <div class="card-text">Pode ser religião mesmo. Pode ser política, movimento, identidade. Qualquer coisa que faça você obedecer sem questionar.</div>
+        </div>
+      </div>
+    </div>
+    <p class="lead text-accent" style="margin-top:18px;"><strong>5.000 anos.</strong> E continua funcionando.</p>
+  </section>
+
+  <!-- 24. RESUMO + GANCHO -->
+  <section class="slide">
+    <div class="eyebrow">Pra fechar</div>
+    <h2 class="heading">Vilarejo virou império por <em>três invenções.</em></h2>
+    <div class="card">
+      <div class="card-content">
+        <div class="card-text" style="color:var(--ink);"><strong class="text-accent">Escrita</strong> · controla a informação</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-content">
+        <div class="card-text" style="color:var(--ink);"><strong class="text-accent">Exército</strong> · controla a força</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-content">
+        <div class="card-text" style="color:var(--ink);"><strong class="text-accent">Religião</strong> · controla as mentes</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <p class="lead">Quem entende essa fórmula, <em>enxerga o mundo</em> de um jeito que poucos enxergam.</p>
+    <div class="spacer-sm"></div>
+    <div class="card" style="border-color:var(--accent);">
+      <div class="card-content">
+        <div class="card-title text-accent">Pergunta da próxima aula</div>
+        <div class="card-text">Se a fórmula é tão poderosa, <strong style="color:var(--ink);">por que os impérios caem?</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ INTRO -->
+  <section class="slide quiz-intro">
+    <div class="eyebrow">Quiz</div>
+    <h2 class="heading">Bora ver o que <em>ficou.</em></h2>
+    <p class="body dim">5 perguntas. Sem pressão. Erro também ensina.</p>
+    <div class="illu">
+      <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="50" stroke="#d4a559" stroke-width="1.5"/>
+        <path d="M50 50 Q60 38 70 50 Q70 58 60 62 L60 72" stroke="#d4a559" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="60" cy="82" r="2.5" fill="#d4a559"/>
+      </svg>
+    </div>
+    <div class="hint">
+      <span class="hint-dot"></span>
+      <span>Toque pra começar</span>
+    </div>
+  </section>
+
+  <!-- Q1 -->
+  <section class="slide" data-quiz="1">
+    <div class="quiz-counter">Pergunta 01 / 05</div>
+    <p class="quiz-q">A escrita, na história da humanidade, foi inventada principalmente pra quê?</p>
+    <div class="quiz-options" data-correct="2">
+      <button class="quiz-opt" data-i="0"><span class="quiz-opt-letter">A</span><span>Pra escrever poesia e literatura.</span></button>
+      <button class="quiz-opt" data-i="1"><span class="quiz-opt-letter">B</span><span>Pra registrar mitos e histórias da tribo.</span></button>
+      <button class="quiz-opt" data-i="2"><span class="quiz-opt-letter">C</span><span>Pra fazer contabilidade — controlar trigo, impostos e soldados.</span></button>
+      <button class="quiz-opt" data-i="3"><span class="quiz-opt-letter">D</span><span>Pra ensinar crianças a ler.</span></button>
+    </div>
+    <div class="quiz-feedback" id="fb-1"></div>
+    <div class="quiz-next-hint" id="nh-1"><span class="hint-dot"></span><span>Toque pra continuar</span></div>
+  </section>
+
+  <!-- Q2 -->
+  <section class="slide" data-quiz="2">
+    <div class="quiz-counter">Pergunta 02 / 05</div>
+    <p class="quiz-q">Por que 100 soldados treinados ganhavam de 1.000 desorganizados?</p>
+    <div class="quiz-options" data-correct="1">
+      <button class="quiz-opt" data-i="0"><span class="quiz-opt-letter">A</span><span>Porque eram fisicamente mais fortes.</span></button>
+      <button class="quiz-opt" data-i="1"><span class="quiz-opt-letter">B</span><span>Porque tinham treino igual, hierarquia e armas padronizadas.</span></button>
+      <button class="quiz-opt" data-i="2"><span class="quiz-opt-letter">C</span><span>Porque os deuses lutavam ao lado deles.</span></button>
+      <button class="quiz-opt" data-i="3"><span class="quiz-opt-letter">D</span><span>Porque atacavam só de noite, no escuro.</span></button>
+    </div>
+    <div class="quiz-feedback" id="fb-2"></div>
+    <div class="quiz-next-hint" id="nh-2"><span class="hint-dot"></span><span>Toque pra continuar</span></div>
+  </section>
+
+  <!-- Q3 -->
+  <section class="slide" data-quiz="3">
+    <div class="quiz-counter">Pergunta 03 / 05</div>
+    <p class="quiz-q">No império romano, 300 mil soldados controlavam 60 milhões de pessoas. Por que isso funcionava?</p>
+    <div class="quiz-options" data-correct="2">
+      <button class="quiz-opt" data-i="0"><span class="quiz-opt-letter">A</span><span>Porque o exército estava em todo lugar ao mesmo tempo.</span></button>
+      <button class="quiz-opt" data-i="1"><span class="quiz-opt-letter">B</span><span>Porque os 60 milhões eram pacíficos por natureza.</span></button>
+      <button class="quiz-opt" data-i="2"><span class="quiz-opt-letter">C</span><span>Porque a religião institucionalizada fazia obedecer o rei virar obedecer Deus.</span></button>
+      <button class="quiz-opt" data-i="3"><span class="quiz-opt-letter">D</span><span>Porque cada cidade era independente e ninguém se importava.</span></button>
+    </div>
+    <div class="quiz-feedback" id="fb-3"></div>
+    <div class="quiz-next-hint" id="nh-3"><span class="hint-dot"></span><span>Toque pra continuar</span></div>
+  </section>
+
+  <!-- Q4 -->
+  <section class="slide" data-quiz="4">
+    <div class="quiz-counter">Pergunta 04 / 05</div>
+    <p class="quiz-q">Qual a diferença entre <strong>religião</strong> e <strong>religião institucionalizada</strong>?</p>
+    <div class="quiz-options" data-correct="1">
+      <button class="quiz-opt" data-i="0"><span class="quiz-opt-letter">A</span><span>Não tem diferença, é a mesma coisa.</span></button>
+      <button class="quiz-opt" data-i="1"><span class="quiz-opt-letter">B</span><span>Religião sempre existiu como crença. Institucionalizada é quando vira estrutura — templo, sacerdote, regra escrita, aliança com o poder.</span></button>
+      <button class="quiz-opt" data-i="2"><span class="quiz-opt-letter">C</span><span>Institucionalizada é só a religião que tem livro sagrado.</span></button>
+      <button class="quiz-opt" data-i="3"><span class="quiz-opt-letter">D</span><span>Institucionalizada é a religião antiga; a moderna é diferente.</span></button>
+    </div>
+    <div class="quiz-feedback" id="fb-4"></div>
+    <div class="quiz-next-hint" id="nh-4"><span class="hint-dot"></span><span>Toque pra continuar</span></div>
+  </section>
+
+  <!-- Q5 -->
+  <section class="slide" data-quiz="5">
+    <div class="quiz-counter">Pergunta 05 / 05</div>
+    <p class="quiz-q">Hoje, no século XXI, a fórmula "escrita + exército + religião" virou o quê?</p>
+    <div class="quiz-options" data-correct="3">
+      <button class="quiz-opt" data-i="0"><span class="quiz-opt-letter">A</span><span>Sumiu — não existe mais.</span></button>
+      <button class="quiz-opt" data-i="1"><span class="quiz-opt-letter">B</span><span>Virou só democracia e voto.</span></button>
+      <button class="quiz-opt" data-i="2"><span class="quiz-opt-letter">C</span><span>Virou tecnologia e internet, sem ligação com poder.</span></button>
+      <button class="quiz-opt" data-i="3"><span class="quiz-opt-letter">D</span><span>Continua funcionando — com nomes novos: mídia, polícia/justiça e ideologia.</span></button>
+    </div>
+    <div class="quiz-feedback" id="fb-5"></div>
+    <div class="quiz-next-hint" id="nh-5"><span class="hint-dot"></span><span>Toque pra continuar</span></div>
+  </section>
+
+  <!-- FINAL -->
+  <section class="slide final">
+    <div class="eyebrow">Resultado</div>
+    <div class="final-score"><span id="finalScore">0</span><span class="final-score-total">/5</span></div>
+    <p class="final-msg" id="finalMsg">—</p>
+    <button class="btn" id="restartBtn">Voltar ao início</button>
+  </section>
+
+</div>
+
+<div class="touch-zones">
+  <div class="tz tz-left" id="tzLeft"></div>
+  <div class="tz tz-right" id="tzRight"></div>
+</div>
+
+<script>
+(function() {
+  const deck = document.getElementById('deck');
+  const slides = Array.from(deck.querySelectorAll('.slide'));
+  const total = slides.length;
+  const progressBar = document.getElementById('progressBar');
+  const counter = document.getElementById('counter');
+  const tzLeft = document.getElementById('tzLeft');
+  const tzRight = document.getElementById('tzRight');
+
+  let current = 0;
+  const quizAnswers = {}; // {qNum: 'correct'|'wrong'}
+  const quizFeedback = {
+    1: {
+      correct: "É isso. A escrita nasceu como planilha de imposto — ferramenta de controle, não de arte.",
+      wrong: {
+        explain: "A escrita nasceu pra <strong>fazer contabilidade</strong>: anotar quanto trigo entrou no celeiro do rei, quanto imposto cada um devia, quantos soldados o exército tinha. Poesia e literatura vieram milhares de anos depois."
+      }
+    },
+    2: {
+      correct: "Exato. Estratégia, hierarquia e padronização venceram a força bruta.",
+      wrong: {
+        explain: "O segredo do exército foi <strong>treino igual + hierarquia (chefe a cada 10, chefe maior a cada 100) + armas padronizadas + ação coordenada</strong>. Não era força física, era organização."
+      }
+    },
+    3: {
+      correct: "Perfeito. A religião institucionalizada foi a tecnologia de controle mais eficiente da história.",
+      wrong: {
+        explain: "Não dava pra ter um soldado em cada esquina. A jogada foi <strong>religião institucionalizada</strong>: bastava um sacerdote em cada vilarejo dizendo que obedecer o rei era vontade dos deuses. Desobedecer = ir pro inferno."
+      }
+    },
+    4: {
+      correct: "Isso. Crença é uma coisa, estrutura aliada ao poder é outra.",
+      wrong: {
+        explain: "Religião como crença sempre existiu (perguntas sobre morte, criação, sentido). <strong>Institucionalizada</strong> é quando vira estrutura: templo, sacerdote, regra escrita, hierarquia — e principalmente <strong>aliança com o poder político</strong>."
+      }
+    },
+    5: {
+      correct: "É isso. A fórmula tem 5 mil anos e continua girando — só mudou de nome.",
+      wrong: {
+        explain: "A fórmula <strong>continua funcionando</strong>, com nomes modernos: <strong>Escrita → Mídia</strong> (algoritmo decide o feed), <strong>Exército → polícia/justiça/inteligência</strong>, <strong>Religião → ideologia</strong> (qualquer coisa que faça você obedecer sem questionar)."
+      }
+    }
+  };
+
+  // Build progress bar
+  function buildProgress() {
+    progressBar.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const seg = document.createElement('div');
+      seg.className = 'progress-seg';
+      seg.dataset.i = i;
+      progressBar.appendChild(seg);
+    }
+  }
+
+  function updateUI() {
+    const segs = progressBar.querySelectorAll('.progress-seg');
+    segs.forEach((s, i) => {
+      s.classList.remove('done', 'active');
+      if (i < current) s.classList.add('done');
+      else if (i === current) s.classList.add('active');
+    });
+    counter.textContent = (current + 1) + '/' + total;
+
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'prev');
+      if (i === current) s.classList.add('active');
+      else if (i < current) s.classList.add('prev');
+    });
+
+    // scroll to top of active slide
+    if (slides[current]) slides[current].scrollTop = 0;
+  }
+
+  function go(i) {
+    if (i < 0) i = 0;
+    if (i >= total) i = total - 1;
+    if (i === current) return;
+    // if leaving final, do nothing special
+    current = i;
+    // if entering final slide, compute score
+    if (slides[current].classList.contains('final')) computeFinal();
+    updateUI();
+  }
+
+  function next() { go(current + 1); }
+  function prev() { go(current - 1); }
+
+  // Touch zones
+  tzLeft.addEventListener('click', prev);
+  tzRight.addEventListener('click', next);
+
+  // Swipe
+  let touchStartX = 0, touchStartY = 0, touchStartT = 0;
+  document.addEventListener('touchstart', (e) => {
+    if (e.target.closest('.progress-wrap')) return;
+    if (e.target.closest('.quiz-opt')) return;
+    if (e.target.closest('.btn')) return;
+    const t = e.touches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+    touchStartT = Date.now();
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (e.target.closest('.progress-wrap')) return;
+    if (e.target.closest('.quiz-opt')) return;
+    if (e.target.closest('.btn')) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+    const dt = Date.now() - touchStartT;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3 && dt < 600) {
+      if (dx < 0) next(); else prev();
+    }
+  }, { passive: true });
+
+  // Keyboard (debug)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowLeft') prev();
+  });
+
+  // Progress bar interactive (tap + drag)
+  let pbDragging = false;
+  function pbHandle(clientX) {
+    const rect = progressBar.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const idx = Math.min(total - 1, Math.floor(ratio * total));
+    if (idx !== current) {
+      current = idx;
+      if (slides[current].classList.contains('final')) computeFinal();
+      updateUI();
+    }
+  }
+  progressBar.addEventListener('touchstart', (e) => {
+    pbDragging = true;
+    pbHandle(e.touches[0].clientX);
+    e.stopPropagation();
+  }, { passive: true });
+  progressBar.addEventListener('touchmove', (e) => {
+    if (!pbDragging) return;
+    pbHandle(e.touches[0].clientX);
+    e.stopPropagation();
+  }, { passive: true });
+  progressBar.addEventListener('touchend', (e) => { pbDragging = false; }, { passive: true });
+  progressBar.addEventListener('click', (e) => {
+    pbHandle(e.clientX);
+  });
+
+  // Quiz logic
+  document.querySelectorAll('[data-quiz]').forEach(slide => {
+    const qNum = slide.dataset.quiz;
+    const opts = slide.querySelector('.quiz-options');
+    const correct = parseInt(opts.dataset.correct, 10);
+    const fb = slide.querySelector('.quiz-feedback');
+    const nh = slide.querySelector('.quiz-next-hint');
+    const buttons = opts.querySelectorAll('.quiz-opt');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        if (slide.dataset.answered === '1') return;
+        slide.dataset.answered = '1';
+        const i = parseInt(btn.dataset.i, 10);
+        buttons.forEach(b => b.disabled = true);
+        const isCorrect = (i === correct);
+        if (isCorrect) {
+          btn.classList.add('correct');
+          fb.className = 'quiz-feedback ok show';
+          fb.innerHTML = '<strong>Acertou.</strong> ' + quizFeedback[qNum].correct;
+          quizAnswers[qNum] = 'correct';
+        } else {
+          btn.classList.add('wrong');
+          buttons[correct].classList.add('correct');
+          fb.className = 'quiz-feedback no show';
+          fb.innerHTML = '<strong>Não foi essa.</strong> ' + quizFeedback[qNum].wrong.explain;
+          quizAnswers[qNum] = 'wrong';
+        }
+        setTimeout(() => { nh.classList.add('show'); }, 400);
+        e.stopPropagation();
+      });
+    });
+  });
+
+  // Final
+  function computeFinal() {
+    let score = 0;
+    Object.values(quizAnswers).forEach(v => { if (v === 'correct') score++; });
+    document.getElementById('finalScore').textContent = score;
+    const msgEl = document.getElementById('finalMsg');
+    let msg;
+    if (score === 5) msg = "Sacou tudo. Agora você enxerga o tabuleiro.";
+    else if (score === 4) msg = "Quase tudo. Faltou só um detalhe — volta lá e revê.";
+    else if (score === 3) msg = "Deu pra pegar o essencial. Vale uma segunda passada nos slides.";
+    else if (score === 2) msg = "Pegou parte. A fórmula tem nuance — relê com calma.";
+    else if (score === 1) msg = "Tá começando. Volta no início, sem pressa, e confia no processo.";
+    else msg = "Bora do zero. Esse conteúdo destrava a próxima aula inteira.";
+    msgEl.textContent = msg;
+  }
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    // reset everything
+    Object.keys(quizAnswers).forEach(k => delete quizAnswers[k]);
+    document.querySelectorAll('[data-quiz]').forEach(slide => {
+      delete slide.dataset.answered;
+      slide.querySelectorAll('.quiz-opt').forEach(b => {
+        b.disabled = false;
+        b.classList.remove('correct', 'wrong');
+      });
+      const fb = slide.querySelector('.quiz-feedback');
+      const nh = slide.querySelector('.quiz-next-hint');
+      fb.className = 'quiz-feedback';
+      fb.innerHTML = '';
+      nh.classList.remove('show');
+    });
+    current = 0;
+    updateUI();
+  });
+
+  // Init
+  buildProgress();
+  updateUI();
+
+  // Prevent double-tap zoom
+  let lastTap = 0;
+  document.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTap < 300) e.preventDefault();
+    lastTap = now;
+  }, { passive: false });
+})();
+</script>
+
+</body>
+</html>
+
